@@ -23,7 +23,7 @@ def _check_child_access(current_user, child_id: int, write: bool = False):
     role = current_user.role_name
     if role == "parent" and child.parent_id != current_user.id:
         return None, error_response("No tienes acceso a este niño.", 403)
-    if role not in ("parent", "admin", "secretary"):
+    if role not in ("parent", "admin", "secretary", "teacher"):
         return None, error_response("Sin permisos.", 403)
 
     return child, None

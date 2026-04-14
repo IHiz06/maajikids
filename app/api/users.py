@@ -16,9 +16,18 @@ bp = Blueprint("users", __name__, url_prefix="/usuarios")
 
 # ── GET /usuarios/ ───────────────────────────────────────────────────────────
 @bp.route("/", methods=["GET"])
-@admin_required
+@any_authenticated   # ← Cambiamos esto
 def list_users():
-    """Lista todos los usuarios (admin). ?rol= ?page= ?per_page="""
+    """Lista todos los usuarios. 
+    Permitido para: Admin y Secretary.
+    ?rol= ?page= ?per_page=
+    """
+    current = get_current_user()
+    
+    # Verificamos permisos manualmente (más claro y flexible)
+    if current.role_name not in ("admin", "secretary"):
+        return error_response("No tienes permisos para ver la lista de usuarios.", 403)
+
     rol = request.args.get("rol")
     page = int(request.args.get("page", 1))
     per_page = int(request.args.get("per_page", 20))
